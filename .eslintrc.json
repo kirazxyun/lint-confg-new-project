@@ -1,0 +1,18 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "jquery": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6
+  },
+  "extends": ["standard"],
+  "rules": {
+    "space-before-function-paren": "off"
+  },
+  "plugins": [
+    "html"
+  ]
+}
