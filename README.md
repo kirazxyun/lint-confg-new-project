@@ -14,7 +14,7 @@ standard是目前使用时最为广泛的，其规则是从eslint中抽取的，
         "envs": [],   // eslint 环境
       	"globals": [],// 声明需要跳过检测的定义全局变量
       	"plugins": [],// eslint 插件列表
-      	"parser": []  // js 解析器（例如 babel-eslint）
+      	"parser": ""  // js 解析器（例如 babel-eslint）
     }
 }
 ```
@@ -54,6 +54,7 @@ module.exports = {
         options: {
           error: false, // Emit errors instead of warnings (default = false)
           snazzy: true, // enable snazzy output (default = true)
+          fix: falese, //是否自动修复，默认false
           parser: 'babel-eslint'// other config options to be passed through to standard
         }
       }]
@@ -65,50 +66,27 @@ module.exports = {
 
 #### 共享standard配置
 
-因为standard-loader默认读取的是package中的配置，或者是options里面的，为了能够和fet共享一份standard配置就必须将standard的配置独立出来。
+因为standard-loader默认读取的是package中的配置，或者是options里面的，为了能够和fet共享一份standard配置，就得将standard的配置放到package里面。
 
-解决方案为：在build目录中新建standard.config.js存放standard的配置，然后在ft.config.js和webpack中引入，如下：
+解决方案为：在build目录中新建lint.config.js用于读取package中standard配置，并加上fet lint的配置，然后在ft.config.js中引入，如下：
 
 ```javascript
-// build/standard.config.js
+// build/lint.config.js
+var config = require('../package.json').standard || {};
+
+config.fix = false;
+
 module.exports = {
-    "ignore": [], // glob 形式的排除列表 (一般无须配置)
-  	"envs": [],   // eslint 环境
-  	"globals": [],// 声明需要跳过检测的定义全局变量
-  	"plugins": [],// eslint 插件列表
-  	"parser": []  // js 解析器（例如 babel-eslint）
-}
+  cwd: '',
+  opts: config
+};
+
 ```
 
 ```javascript
 // ft.config.js
-var standardConfig = require('./standard.config.js')
-var merge = require('webpack-merge')
-export.lint = {
-    cwd: '',
-  	opts: merge({
-        fix: false
-    }, standardConfig)
-}
-```
-
-```javascript
-// build/webpack.jsconfig.js
-var standardConfig = require('./standard.config.js')
-var merge = require('webpack-merge')
-module.exports = {
-    module: {
-        rules: [{
-        test: /\.(js|vue)$/,
-        loader: 'standard-loader',
-        enforce: 'pre',
-        include: [resolve('src'), resolve('test')],
-        options: merge({
-          error: false, // Emit errors instead of warnings (default = false)
-          snazzy: true, // enable snazzy output (default = true)
-        }, standardConfig)
-      }]
-    }
+var lintConfig = require('./lint.config.js')
+export.lint = lintConfig
 }
 ```
 
@@ -116,13 +94,8 @@ module.exports = {
 
 代码总是一些一大堆，如果都堆积到构建的时候才去检查，要费更大的功夫去修复，如果能实时提示是最好不过了。这个的实现，靠的就是在ide中安装插件，实时的检查代码，给出错误提示。
 
-1、vscode: JavaScript Standard Style
-
-2、sublime:
-
-3、webstorm:
-
-4、vim
+具体查看standard文档的编辑器部分
+https://standardjs.com/readme-zhcn.html
 
 #### git提交前检查
 
@@ -150,7 +123,7 @@ module.exports = {
         "precommit": "lint-staged"
     },
   	"lint-staged": {
-        "*.js": ["standard --fix", "git add"]
+        "src/*.{js,vue}": ["standard --fix", "git add"]
     }
 }
 ```
@@ -160,7 +133,7 @@ lint-staged的配置还可以独立为文件：.lintstagedrc，如下：
 ```json
 // .lintstagedrc.json
 {
-    "*.js": ["standard --fix", "git add"]
+    "src/*.{js,vue}": ["standard --fix", "git add"]
 }
 ```
 
