@@ -1,6 +1,6 @@
 {
   "src/*.{js,vue}": [
-    "standard",
+    "standard --fix",
     "git add"
   ]
 }
