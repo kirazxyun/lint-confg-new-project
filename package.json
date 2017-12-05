@@ -10,9 +10,7 @@
   "standard": {
     "globals": [],
     "ignore": [],
-    "plugins": [
-      "html"
-    ],
+    "plugins": [],
     "parser": "babel-eslint",
     "envs": [
       "browser"
@@ -21,8 +19,8 @@
   "dependencies": {},
   "devDependencies": {
     "babel-eslint": "^8.0.3",
-    "eslint-plugin-html": "^4.0.1",
     "extract-text-webpack-plugin": "^3.0.2",
+    "husky": "^0.14.3",
     "lint-staged": "^6.0.0",
     "standard": "^10.0.3",
     "standard-loader": "^6.0.1",

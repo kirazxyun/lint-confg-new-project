@@ -1,3 +1,3 @@
-var a = 0;
-var b = 2;
-alert(a)
+var a = 0
+var b = 2
+console.log(a, b)
